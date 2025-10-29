@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Personal Library - Reading Paradise</title>
+    <link rel="icon" href="images/pzn.png.png" type="image/png">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <!-- Animated Background with Particles -->
+    <div class="particles-background"></div>
+    <canvas id="particlesCanvas"></canvas>
+    
+    <!-- Floating Books Animation -->
+    <div class="floating-books">
+        <i class="fas fa-book"></i>
+        <i class="fas fa-book-open"></i>
+        <i class="fas fa-bookmark"></i>
+        <i class="fas fa-feather-alt"></i>
+        <i class="fas fa-scroll"></i>
+    </div>
+    
+    <div id="notification" class="notification"></div>
+
+    <!-- Enhanced Music Player -->
+    <div class="music-player">
+        <button id="musicToggle" class="music-toggle" title="Putar/Pause Musik">
+            <i class="fas fa-music"></i>
+        </button>
+        <div class="music-info">
+            <div class="music-title">Classical Music</div>
+            <div class="music-visualizer">
+                <span></span><span></span><span></span><span></span><span></span>
+            </div>
+        </div>
+        <input type="range" id="volumeControl" min="0" max="100" value="30" class="volume-slider">
+    </div>
+
+    <!-- Reading Progress Tracker -->
+    <div class="reading-progress-widget">
+        <div class="progress-circle">
+            <svg viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="45" class="progress-bg"></circle>
+                <circle cx="50" cy="50" r="45" class="progress-bar" id="progressCircle"></circle>
+            </svg>
+            <div class="progress-text">
+                <span id="progressPercent">0%</span>
+                <small>Terbaca</small>
+            </div>
+        </div>
+    </div>
+
+    <header class="main-header">
+        <div class="header-content-wrapper">
+            <div class="logo">
+                <a href="/">
+                    <div class="logo-icon">
+                        <i class="fas fa-book-reader"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h1>My Personal Library</h1>
+                        <span class="tagline">My Reading Paradise</span>
+                    </div>
+                </a>
+            </div>
+            <div class="search-bar-header">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="searchInputHeader" placeholder="Cari judul, penulis, atau tahun..." aria-label="Cari buku">
+                <button type="button" id="advancedSearch" title="Pencarian Lanjutan">
+                    <i class="fas fa-sliders-h"></i>
+                </button>
+            </div>
+            <div class="user-actions">
+                <button id="sortToggle" class="button secondary-button" title="Urutkan Buku">
+                    <i class="fas fa-sort"></i>
+                </button>
+                <button id="addBookToggleBtn" class="button primary-button">
+                    <i class="fas fa-plus"></i> <span>Tambah Buku</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Sort Menu -->
+        <div id="sortMenu" class="sort-menu" style="display: none;">
+            <button data-sort="newest"><i class="fas fa-clock"></i> Terbaru</button>
+            <button data-sort="oldest"><i class="fas fa-history"></i> Terlama</button>
+            <button data-sort="title"><i class="fas fa-sort-alpha-down"></i> Judul A-Z</button>
+            <button data-sort="author"><i class="fas fa-user"></i> Penulis A-Z</button>
+            <button data-sort="year-desc"><i class="fas fa-calendar-alt"></i> Tahun Terbaru</button>
+            <button data-sort="year-asc"><i class="fas fa-calendar"></i> Tahun Terlama</button>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <!-- Enhanced Stats Cards with Animation -->
+            <div class="stats-container">
+                <div class="stat-card stat-total">
+                    <div class="stat-icon">
+                        <i class="fas fa-books"></i>
+                        <div class="icon-glow"></div>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="totalBooks">0</h3>
+                        <p>Total Koleksi</p>
+                        <div class="stat-trend">
+                            <i class="fas fa-arrow-up"></i>
+                            <span id="bookTrend">+0 bulan ini</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="stat-card stat-read">
+                    <div class="stat-icon stat-success">
+                        <i class="fas fa-check-double"></i>
+                        <div class="icon-glow"></div>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="readBooks">0</h3>
+                        <p>Sudah Dibaca</p>
+                        <div class="stat-bar">
+                            <div class="stat-bar-fill" id="readBar"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="stat-card stat-unread">
+                    <div class="stat-icon stat-warning">
+                        <i class="fas fa-hourglass-half"></i>
+                        <div class="icon-glow"></div>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="unreadBooks">0</h3>
+                        <p>Belum Dibaca</p>
+                        <div class="reading-goal">
+                            <small>Target bulan ini: <strong id="monthlyGoal">5 buku</strong></small>
+                        </div>
+                    </div>
+                </div>
+                <div class="stat-card stat-streak">
+                    <div class="stat-icon stat-fire">
+                        <i class="fas fa-heart"></i>
+                        <div class="icon-glow"></div>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="readingStreak">0</h3>
+                        <p>Buku Favorit</p>
+                        <div class="streak-info">
+                            <small>Your favorites! ❤️</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reading Challenges -->
+            <div class="challenges-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                    <h3><i class="fas fa-trophy"></i> Tantangan Membaca</h3>
+                    <button id="setGoalBtn" class="button secondary-button" style="padding: 8px 20px; font-size: 0.85rem;">
+                        <i class="fas fa-cog"></i> Atur Target
+                    </button>
+                </div>
+                <div class="challenges-grid">
+                    <div class="challenge-card">
+                        <div class="challenge-icon">📅</div>
+                        <h4>Target Tahunan</h4>
+                        <p>Baca <strong id="yearlyGoalDisplay">52 buku</strong> dalam 1 tahun</p>
+                        <div class="challenge-progress">
+                            <div class="challenge-bar" style="width: 0%" id="challenge1"></div>
+                        </div>
+                        <span class="challenge-status">0/52</span>
+                    </div>
+                    <div class="challenge-card">
+                        <div class="challenge-icon">📚</div>
+                        <h4>Variety Reader</h4>
+                        <p>Baca buku dari 5 dekade berbeda</p>
+                        <div class="challenge-progress">
+                            <div class="challenge-bar" style="width: 0%" id="challenge2"></div>
+                        </div>
+                        <span class="challenge-status">0/5 dekade</span>
+                    </div>
+                    <div class="challenge-card">
+                        <div class="challenge-icon">🏆</div>
+                        <h4>Lifetime Achievement</h4>
+                        <p>Capai milestone 100 buku seumur hidup</p>
+                        <div class="challenge-progress">
+                            <div class="challenge-bar" style="width: 0%" id="challenge3"></div>
+                        </div>
+                        <span class="challenge-status">Locked (Baca 50 buku)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add Book Section with Enhanced Form -->
+            <section id="addBookSection" class="card-container add-book-section" style="display: none;">
+                <div class="section-title">
+                    <h2><i class="fas fa-plus-circle"></i> Tambahkan Buku Baru</h2>
+                    <p class="subtitle">Lengkapi detail buku untuk memperkaya koleksi Anda</p>
+                </div>
+                <form id="bookForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="title">
+                                <i class="fas fa-book"></i> Judul Buku <span class="required">*</span>
+                            </label>
+                            <input type="text" id="title" required placeholder="Contoh: Atomic Habits">
+                        </div>
+                        <div class="form-group">
+                            <label for="author">
+                                <i class="fas fa-user-edit"></i> Penulis <span class="required">*</span>
+                            </label>
+                            <input type="text" id="author" required placeholder="Contoh: James Clear">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="year">
+                                <i class="fas fa-calendar"></i> Tahun Terbit <span class="required">*</span>
+                            </label>
+                            <input type="number" id="year" required min="1000" max="2099" placeholder="2018">
+                        </div>
+                        <div class="form-group">
+                            <label for="genre">
+                                <i class="fas fa-tags"></i> Genre
+                            </label>
+                            <select id="genre">
+                                <option value="">Pilih Genre</option>
+                                <option value="Fiksi">Fiksi</option>
+                                <option value="Non-Fiksi">Non-Fiksi</option>
+                                <option value="Self-Help">Self-Help</option>
+                                <option value="Biografi">Biografi</option>
+                                <option value="Sejarah">Sejarah</option>
+                                <option value="Sains">Sains</option>
+                                <option value="Teknologi">Teknologi</option>
+                                <option value="Bisnis">Bisnis</option>
+                                <option value="Romance">Romance</option>
+                                <option value="Thriller">Thriller</option>
+                                <option value="Fantasy">Fantasy</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="pages">
+                                <i class="fas fa-file-alt"></i> Jumlah Halaman
+                            </label>
+                            <input type="number" id="pages" min="1" placeholder="300">
+                        </div>
+                        <div class="form-group">
+                            <label for="rating">
+                                <i class="fas fa-star"></i> Rating (1-5)
+                            </label>
+                            <div class="rating-input">
+                                <input type="number" id="rating" min="1" max="5" step="0.5" placeholder="4.5">
+                                <div class="rating-stars" id="ratingStars">
+                                    <i class="far fa-star" data-rating="1"></i>
+                                    <i class="far fa-star" data-rating="2"></i>
+                                    <i class="far fa-star" data-rating="3"></i>
+                                    <i class="far fa-star" data-rating="4"></i>
+                                    <i class="far fa-star" data-rating="5"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="notes">
+                            <i class="fas fa-sticky-note"></i> Catatan Pribadi
+                        </label>
+                        <textarea id="notes" rows="3" placeholder="Tambahkan catatan atau review singkat..."></textarea>
+                    </div>
+                    <div class="form-group">
+    <label for="coverImage">
+        <i class="fas fa-image"></i> Sampul Buku
+    </label>
+    <div class="file-upload-wrapper">
+        <input type="file" id="coverImage" accept="image/*">
+        <div class="file-upload-text">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <span>Klik untuk upload gambar sampul buku</span>
+            <small style="display: block; margin-top: 10px; color: var(--text-muted);">
+                Format: JPG, PNG (Maks 5MB) - Gambar akan dikompres otomatis
+            </small>
+        </div>
+        <div id="imagePreview" class="image-preview"></div>
+    </div>
+</div>
+                    <div class="form-options">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="isRead">
+                            <label for="isRead">
+                                <i class="fas fa-check-circle"></i> Sudah selesai dibaca
+                            </label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="isFavorite">
+                            <label for="isFavorite">
+                                <i class="fas fa-heart"></i> Tandai sebagai favorit
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="button secondary-button" onclick="document.getElementById('bookForm').reset(); document.getElementById('imagePreview').style.display='none';">
+                            <i class="fas fa-redo"></i> Reset
+                        </button>
+                        <button type="submit" class="button primary-button">
+                            <i class="fas fa-save"></i> Simpan ke Perpustakaan
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Book Collection Section -->
+            <section class="card-container book-list-section">
+                <div class="section-header">
+                    <div class="section-title">
+                        <h2><i class="fas fa-books"></i> Koleksi Buku Anda</h2>
+                        <span class="book-count" id="bookCount">0 buku</span>
+                    </div>
+                    <div class="view-controls">
+                        <div class="view-toggle">
+                            <button class="view-btn active" data-view="grid" title="Grid View">
+                                <i class="fas fa-th-large"></i>
+                            </button>
+                            <button class="view-btn" data-view="list" title="List View">
+                                <i class="fas fa-list"></i>
+                            </button>
+                            <button class="view-btn" data-view="cover" title="Cover Flow">
+                                <i class="fas fa-images"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="controls">
+                    <div class="filter-options">
+                        <button class="button filter-button active" data-filter="all">
+                            <i class="fas fa-book"></i> Semua <span class="badge" id="badgeAll">0</span>
+                        </button>
+                        <button class="button filter-button" data-filter="read">
+                            <i class="fas fa-check"></i> Sudah Dibaca <span class="badge" id="badgeRead">0</span>
+                        </button>
+                        <button class="button filter-button" data-filter="unread">
+                            <i class="fas fa-clock"></i> Belum Dibaca <span class="badge" id="badgeUnread">0</span>
+                        </button>
+                        <button class="button filter-button" data-filter="favorites">
+                            <i class="fas fa-heart"></i> Favorit <span class="badge" id="badgeFav">0</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="bookListContainer" class="book-grid"></div>
+
+                <p id="noBooksMessage" class="info-message" style="display: none;">
+                    <div class="empty-state">
+                        <i class="fas fa-book-dead"></i>
+                        <h3>Perpustakaan Masih Kosong</h3>
+                        <p>Mulai bangun koleksi buku Anda sekarang!</p>
+                        <button class="button primary-button" onclick="document.getElementById('addBookToggleBtn').click()">
+                            <i class="fas fa-plus"></i> Tambah Buku Pertama
+                        </button>
+                    </div>
+                </p>
+                <p id="noResultsMessage" class="info-message" style="display: none;">
+                    <div class="empty-state">
+                        <i class="fas fa-search"></i>
+                        <h3>Tidak Ada Hasil</h3>
+                        <p>Coba ubah kata kunci atau filter pencarian Anda</p>
+                    </div>
+                </p>
+            </section>
+
+            <!-- Reading Statistics -->
+            <div class="stats-section">
+                <h3><i class="fas fa-chart-line"></i> Statistik Membaca</h3>
+                <div class="reading-stats">
+                    <div class="stat-item">
+                        <i class="fas fa-book-reader"></i>
+                        <strong id="totalPages">0</strong>
+                        <span>Total Halaman</span>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-star"></i>
+                        <strong id="avgRating">0.0</strong>
+                        <span>Rating Rata-rata</span>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-calendar-check"></i>
+                        <strong id="booksThisMonth">0</strong>
+                        <span>Buku Bulan Ini</span>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-layer-group"></i>
+                        <strong id="uniqueGenres">0</strong>
+                        <span>Genre Berbeda</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <i class="fas fa-book-reader"></i>
+                <h3>My Personal Library</h3>
+            </div>
+            <p class="footer-quote">"A reader lives a thousand lives before he dies."</p>
+            <p class="footer-author">- George R.R. Martin</p>
+            <div class="footer-stats">
+                <span><i class="fas fa-book"></i> <strong id="footerTotal">0</strong> Books</span>
+                <span><i class="fas fa-heart"></i> <strong id="footerStreak">0</strong> Favorites</span>
+                <span><i class="fas fa-heart"></i> Made with Love</span>
+            </div>
+            <p class="copyright">&copy; 2025 Rama Personal Library. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Book Detail Modal -->
+    <div id="bookModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close"><i class="fas fa-times"></i></button>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <!-- Goal Setting Modal - Ganti modal yang lama dengan yang ini -->
+<div id="goalModal" class="modal">
+    <div class="modal-content" style="max-width: 600px;">
+        <button class="modal-close" onclick="document.getElementById('goalModal').style.display='none'">
+            <i class="fas fa-times"></i>
+        </button>
+        <h2 style="font-family: 'Playfair Display', serif; color: var(--primary-color); margin-bottom: 20px;">
+            <i class="fas fa-target"></i> Atur Target Membaca
+        </h2>
+        <p style="color: var(--text-muted); margin-bottom: 30px;">
+            Tentukan target membaca Anda untuk meningkatkan motivasi
+        </p>
+        
+        <!-- Target Tahunan -->
+        <div class="form-group" style="margin-bottom: 25px;">
+            <label for="goalInput" style="font-weight: 600; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+                <i class="fas fa-calendar-alt" style="color: var(--accent-gold);"></i> Target Buku per Tahun
+            </label>
+            <input type="number" id="goalInput" min="1" max="365" placeholder="52" 
+                   style="font-size: 1.1rem; text-align: center; padding: 14px;">
+            <div style="display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap;">
+                <button onclick="setQuickGoal(12)" class="button secondary-button" style="flex: 1; min-width: 90px; padding: 10px;">
+                    12 (1/bulan)
+                </button>
+                <button onclick="setQuickGoal(24)" class="button secondary-button" style="flex: 1; min-width: 90px; padding: 10px;">
+                    24 (2/bulan)
+                </button>
+                <button onclick="setQuickGoal(52)" class="button secondary-button" style="flex: 1; min-width: 90px; padding: 10px;">
+                    52 (1/minggu)
+                </button>
+                <button onclick="setQuickGoal(100)" class="button secondary-button" style="flex: 1; min-width: 90px; padding: 10px;">
+                    100 (ambisius)
+                </button>
+            </div>
+        </div>
+
+        <!-- Target Variety Reader -->
+        <div class="form-group" style="margin-bottom: 25px;">
+            <label for="varietyGoalInput" style="font-weight: 600; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+                <i class="fas fa-book-open" style="color: var(--accent-gold);"></i> Target Variety Reader (Dekade Berbeda)
+            </label>
+            <input type="number" id="varietyGoalInput" min="1" max="20" placeholder="5" 
+                   style="font-size: 1.1rem; text-align: center; padding: 14px;">
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 8px;">
+                <i class="fas fa-info-circle"></i> Baca buku dari berbagai dekade (1950an, 1960an, dst)
+            </p>
+        </div>
+
+        <!-- Target Lifetime Achievement -->
+        <div class="form-group" style="margin-bottom: 30px;">
+            <label for="lifetimeGoalInput" style="font-weight: 600; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+                <i class="fas fa-trophy" style="color: var(--accent-gold);"></i> Target Lifetime Achievement
+            </label>
+            <input type="number" id="lifetimeGoalInput" min="1" max="10000" placeholder="100" 
+                   style="font-size: 1.1rem; text-align: center; padding: 14px;">
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 8px;">
+                <i class="fas fa-info-circle"></i> Total buku yang ingin dibaca seumur hidup
+            </p>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="display: flex; gap: 15px;">
+            <button onclick="document.getElementById('goalModal').style.display='none'" 
+                    class="button secondary-button" style="flex: 1;">
+                <i class="fas fa-times"></i> Batal
+            </button>
+            <button onclick="saveYearlyGoal()" class="button primary-button" style="flex: 1;">
+                <i class="fas fa-save"></i> Simpan Semua Target
+            </button>
+        </div>
+    </div>
+</div>
+
+  <!-- Library untuk kompresi gambar -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/browser-image-compression/2.0.2/browser-image-compression.min.js"></script>
+    
+    <script src="script.js"></script>
+</body>
+</html>
